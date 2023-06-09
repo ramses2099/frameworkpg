@@ -25,23 +25,23 @@ class DrawSystem(System):
         super().__init__()
 
     def check(self, entity):
-        drawcomp = entity.getcomponent("Drawable")
-        return drawcomp is not None
+        spcomp = entity.getcomponent("Sprite")
+        return spcomp is not None
 
     def update(self, entity, screen, event):
         typecomp = entity.getcomponent("Type")
-        poscomp = entity.getcomponent("Position")
+        trancomp = entity.getcomponent("Transform")
 
         if typecomp.typename == factory.ENTITY_TYPE[1]:
-            x, y = poscomp.rect.x, poscomp.rect.y
+            x, y = trancomp.rect.x, trancomp.rect.y
             screen.blit(factory.IMG_ELEMENT_PURPLE, (x, y))
 
         if typecomp.typename == factory.ENTITY_TYPE[0]:
-            p_x, p_y = poscomp.rect.x, poscomp.rect.y
+            p_x, p_y = trancomp.rect.x, trancomp.rect.y
             screen.blit(factory.IMG_PLAYER_BLUE, (p_x, p_y))
 
         if typecomp.typename == factory.ENTITY_TYPE[2]:
-            p_x, p_y = poscomp.rect.x, poscomp.rect.y
+            p_x, p_y = trancomp.rect.x, trancomp.rect.y
             screen.blit(factory.IMG_BALL_BLUE, (p_x, p_y))
 
 
@@ -50,21 +50,21 @@ class MovementSystem(System):
         super().__init__()
 
     def check(self, entity):
-        movcomp = entity.getcomponent("Movible")
+        movcomp = entity.getcomponent("Motion")
         return movcomp is not None
 
     def update(self, entity, screen, event):
         typecomp = entity.getcomponent("Type")
-        poscomp = entity.getcomponent("Position")
-        velcomp = entity.getcomponent("Velocity")
+        trancomp = entity.getcomponent("Transform")
+        movcomp = entity.getcomponent("Motion")
 
         if typecomp.typename == factory.ENTITY_TYPE[1]:
             pass
         if typecomp.typename == factory.ENTITY_TYPE[0]:
             pass
         if typecomp.typename == factory.ENTITY_TYPE[2]:
-            velcomp.vx += 4
-            poscomp.rect.x = velcomp.vx
+            movcomp.vx += 4
+            trancomp.rect.x = movcomp.vx
 
 
 class InputSystem(System):
@@ -78,19 +78,19 @@ class InputSystem(System):
 
     def update(self, entity, screen, event):
         typecomp = entity.getcomponent("Type")
-        poscomp = entity.getcomponent("Position")
-        velcomp = entity.getcomponent("Velocity")
+        trancomp = entity.getcomponent("Transform")
+        movcomp = entity.getcomponent("Motion")
         dircomp = entity.getcomponent("Direction")
 
         if typecomp.typename == factory.ENTITY_TYPE[0]:
             if event.type == KEYDOWN and event.key == K_RIGHT:
-                if poscomp.rect.x <= self.window_size[0] - (poscomp.rect.w * 2):
+                if trancomp.rect.x <= self.window_size[0] - (trancomp.rect.w * 2):
                     dircomp.direction = 1
-                    poscomp.rect.x += velcomp.vx * dircomp.direction
+                    trancomp.rect.x += movcomp.vx * dircomp.direction
             if event.type == KEYDOWN and event.key == K_LEFT:
-                if poscomp.rect.x >= poscomp.rect.w:
+                if trancomp.rect.x >= trancomp.rect.w:
                     dircomp.direction = -1
-                    poscomp.rect.x += velcomp.vx * dircomp.direction
+                    trancomp.rect.x += movcomp.vx * dircomp.direction
 
 
 class Direction:
@@ -98,18 +98,20 @@ class Direction:
         self.name = "Direction"
         self.direction = direction
 
-
-class Position:
+# Has a Position in the world
+class Transform:
     def __init__(self, x, y, w, h):
-        self.name = "Position"
+        self.name = "Transform"
         self.rect = pygame.Rect(x, y, w, h)
 
-
-class Velocity:
-    def __init__(self, vx, vy):
-        self.name = "Velocity"
+# Can move(velocity, acceleration)
+class Motion:
+    def __init__(self, vx, vy, ax =0, ay=0):
+        self.name = "Motion"
         self.vx = vx
         self.vy = vy
+        self.ax = ax
+        self.ay = ay
 
 
 class Type:
@@ -117,17 +119,23 @@ class Type:
         self.name = "Type"
         self.typename = typename
 
-
-class Drawable:
+# Should display on screen
+class Sprite:
     def __init__(self) -> None:
-        self.name = "Drawable"
+        self.name = "Sprite"
         self.draw = True
 
-
-class Movible:
+# Collides with other entity
+class Collision:
     def __init__(self) -> None:
-        self.name = "Movible"
-        self.move = True
+        self.name = "Collision"
+
+# Life 
+class Life:
+    def __init__(self) -> None:
+        self.name = "Life"
+        self.currentlife = 3
+        self.maxlife = 5
 
 
 class Collectable:

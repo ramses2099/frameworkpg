@@ -46,9 +46,9 @@ ENTITY_TYPE = ["PLAYER", "ELEMENT", "BALL", "ITEM"]
 def makeElement(x, y):
     entity = engine.Entity()
     entity.addcomponent(engine.Type(typename=ENTITY_TYPE[1]))
-    entity.addcomponent(engine.Position(x, y, SIZE_IMG_ELEMENT[0], SIZE_IMG_ELEMENT[1]))
-    entity.addcomponent(engine.Drawable())
-    entity.addcomponent(engine.Velocity(0, 0))
+    entity.addcomponent(engine.Transform(x, y, SIZE_IMG_ELEMENT[0], SIZE_IMG_ELEMENT[1]))
+    entity.addcomponent(engine.Sprite())
+    entity.addcomponent(engine.Motion(0, 0))
     return entity
 
 
@@ -57,15 +57,15 @@ def makePlayer():
     entity = engine.Entity()
     entity.addcomponent(engine.Type(typename=ENTITY_TYPE[0]))
     entity.addcomponent(
-        engine.Position(
+        engine.Transform(
             PADDLE_START_POS[0],
             PADDLE_START_POS[1],
             SIZE_IMG_PADDLE[0],
             SIZE_IMG_PADDLE[1],
         )
     )
-    entity.addcomponent(engine.Velocity(90, 0))
-    entity.addcomponent(engine.Drawable())
+    entity.addcomponent(engine.Motion(90, 0))
+    entity.addcomponent(engine.Sprite())
     entity.addcomponent(engine.Direction())
     entity.addcomponent(engine.Input())
     return entity
@@ -77,15 +77,14 @@ def makeBall(x=0, y=0):
     entity.addcomponent(engine.Type(typename=ENTITY_TYPE[2]))
     if x == 0 and y == 0:
         entity.addcomponent(
-            engine.Position(
+            engine.Transform(
                 BALL_START_POS[0], BALL_START_POS[1], SIZE_IMG_BALL[0], SIZE_IMG_BALL[1]
             )
         )
     else:
-        entity.addcomponent(engine.Position(x, y, SIZE_IMG_BALL[0], SIZE_IMG_BALL[1]))
-    entity.addcomponent(engine.Velocity(1, 9))
-    entity.addcomponent(engine.Drawable())
-    entity.addcomponent(engine.Movible())
+        entity.addcomponent(engine.Transform(x, y, SIZE_IMG_BALL[0], SIZE_IMG_BALL[1]))
+    entity.addcomponent(engine.Motion(1, 9))
+    entity.addcomponent(engine.Sprite())
     return entity
 
 
@@ -93,9 +92,8 @@ def makeBall(x=0, y=0):
 def makeItem(x, y):
     entity = engine.Entity()
     entity.addcomponent(engine.Type(typename=ENTITY_TYPE[3]))
-    entity.addcomponent(engine.Position(x, y, SIZE_IMG_BALL[0], SIZE_IMG_BALL[1]))
-    entity.addcomponent(engine.Velocity(1, 9))
-    entity.addcomponent(engine.Drawable())
-    entity.addcomponent(engine.Movible())
+    entity.addcomponent(engine.Transform(x, y, SIZE_IMG_BALL[0], SIZE_IMG_BALL[1]))
+    entity.addcomponent(engine.Motion(1, 9))
+    entity.addcomponent(engine.Sprite())
     entity.addcomponent(engine.Collectable())
     return entity

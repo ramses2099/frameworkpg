@@ -24,7 +24,7 @@ element1 = factory.makeElement(350, 350)
 entities.append(element1)
 
 ballblue = factory.makeBall()
-ballblue.removecomponent("Movible")
+ballblue.removecomponent("Motion")
 entities.append(ballblue)
 
 ballgrey = factory.makeBall(30, 250)
