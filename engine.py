@@ -43,6 +43,10 @@ class DrawSystem(System):
         if typecomp.typename == factory.ENTITY_TYPE[2]:
             p_x, p_y = trancomp.rect.x, trancomp.rect.y
             screen.blit(factory.IMG_BALL_BLUE, (p_x, p_y))
+        
+        if typecomp.typename == factory.ENTITY_TYPE[3]:
+            p_x, p_y = trancomp.rect.x, trancomp.rect.y
+            screen.blit(factory.IMG_BALL_GREY, (p_x, p_y))
 
 
 class MovementSystem(System):
@@ -63,8 +67,68 @@ class MovementSystem(System):
         if typecomp.typename == factory.ENTITY_TYPE[0]:
             pass
         if typecomp.typename == factory.ENTITY_TYPE[2]:
-            movcomp.vx += 4
-            trancomp.rect.x = movcomp.vx
+            # Motion
+            trancomp.rect.x += movcomp.vx
+            # trancomp.rect.y += movcomp.vy
+            movcomp.vx += movcomp.ax
+            # movcomp.vy += movcomp.ay
+        if typecomp.typename == factory.ENTITY_TYPE[3]:
+            # Motion
+            # trancomp.rect.x += movcomp.vx
+            trancomp.rect.bottom += movcomp.vy
+            # movcomp.vx += movcomp.ax
+            movcomp.vy += movcomp.ay
+            
+class CollisionSystem(System):
+    def __init__(self, pentity) -> None:
+        super().__init__()
+        self.pentity = pentity
+
+    def check(self, entity):
+        collcomp = entity.getcomponent("Collision")
+        return collcomp is not None
+
+    def update(self, entity, screen, event):
+        typecomp = entity.getcomponent("Type")
+    
+        if typecomp.typename == factory.ENTITY_TYPE[1]:
+            pass
+        if typecomp.typename == factory.ENTITY_TYPE[0]:
+            pass
+        if typecomp.typename == factory.ENTITY_TYPE[2]:
+            pass
+        if typecomp.typename == factory.ENTITY_TYPE[3]:
+            prect = self.pentity.getcomponent("Transform")
+            erect = entity.getcomponent("Transform")
+            movcomp = entity.getcomponent("Motion")
+            # print
+            
+            collide = pygame.Rect.colliderect(prect.rect, erect.rect)
+            if collide:
+                movcomp.ay *= -1
+
+
+class DebugSystem(System):
+    def __init__(self) -> None:
+        super().__init__()
+        
+    def check(self, entity):
+        debcomp = entity.getcomponent("Debug")
+        return debcomp is not None
+
+    def update(self, entity, screen, event):
+        typecomp = entity.getcomponent("Type")
+    
+        if typecomp.typename == factory.ENTITY_TYPE[1]:
+            pass
+        if typecomp.typename == factory.ENTITY_TYPE[0]:
+            pass
+        if typecomp.typename == factory.ENTITY_TYPE[2]:
+            pass
+        if typecomp.typename == factory.ENTITY_TYPE[3]:
+           trancomp = entity.getcomponent("Transform")
+           pygame.draw.rect(screen,(0,100,255), trancomp.rect, 3)
+
 
 
 class InputSystem(System):
@@ -137,6 +201,10 @@ class Life:
         self.currentlife = 3
         self.maxlife = 5
 
+# Debug component
+class Debug:
+    def __init__(self) -> None:
+        self.name = "Debug"
 
 class Collectable:
     def __init__(self) -> None:

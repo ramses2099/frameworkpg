@@ -30,14 +30,18 @@ entities.append(ballblue)
 ballgrey = factory.makeBall(30, 250)
 entities.append(ballgrey)
 
+# Object Test
 item = factory.makeItem(45, 54)
+item.addcomponent(engine.Debug())
+item.removecomponent("Motion")
+entities.append(item)
 # item.printcomponents()
-
 
 drawsystem = engine.DrawSystem()
 movementsystem = engine.MovementSystem()
 inputsystem = engine.InputSystem(window_size=WINDOW_SIZE)
-
+collisionsystem = engine.CollisionSystem(player)
+debugsystem = engine.DebugSystem()
 
 def main():
     pygame.init()
@@ -54,9 +58,15 @@ def main():
             inputsystem.updates(entities, screen=None, event=event)
 
         screen.fill(BLACK)
-
+        
         # update system
         movementsystem.updates(entities, screen=None, event=None)
+        
+        # update collision system
+        collisionsystem.updates(entities, screen=None, event=None)
+        
+        # update debugs system
+        debugsystem.updates(entities, screen, event=None)
 
         # draw system
         drawsystem.updates(entities, screen, event=None)

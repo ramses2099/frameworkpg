@@ -93,7 +93,7 @@ def makeItem(x, y):
     entity = engine.Entity()
     entity.addcomponent(engine.Type(typename=ENTITY_TYPE[3]))
     entity.addcomponent(engine.Transform(x, y, SIZE_IMG_BALL[0], SIZE_IMG_BALL[1]))
-    entity.addcomponent(engine.Motion(1, 9))
+    entity.addcomponent(engine.Motion(1, 0,0,0.3))
     entity.addcomponent(engine.Sprite())
-    entity.addcomponent(engine.Collectable())
+    entity.addcomponent(engine.Collision())
     return entity
