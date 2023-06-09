@@ -61,17 +61,32 @@ class MovementSystem(System):
         typecomp = entity.getcomponent("Type")
         trancomp = entity.getcomponent("Transform")
         movcomp = entity.getcomponent("Motion")
+        dircomp = entity.getcomponent("Direction")
 
-        if typecomp.typename == factory.ENTITY_TYPE[1]:
-            pass
         if typecomp.typename == factory.ENTITY_TYPE[0]:
             pass
+        # ELEMENT
+        if typecomp.typename == factory.ENTITY_TYPE[1]:
+            bounds = pygame.display.get_surface().get_rect()
+            # Motion            
+            trancomp.rect.y += dircomp.dir * movcomp.vy
+           
+            if trancomp.rect.y <= bounds.top or trancomp.rect.y + trancomp.rect.h >= bounds.bottom:
+                dircomp.dir *= -1
+                
+        # BALL  
         if typecomp.typename == factory.ENTITY_TYPE[2]:
+            bounds = pygame.display.get_surface().get_rect()
             # Motion
-            trancomp.rect.x += movcomp.vx
-            # trancomp.rect.y += movcomp.vy
-            movcomp.vx += movcomp.ax
-            # movcomp.vy += movcomp.ay
+            trancomp.rect.x += dircomp.dir * movcomp.vx            
+            trancomp.rect.y += dircomp.dir * movcomp.vy
+            
+            # Bound
+            if trancomp.rect.x <= bounds.lef or trancomp.rect.x + trancomp.rect.w >= bounds.right:
+                dircomp.dir *= -1 
+            if trancomp.rect.y <= bounds.top or trancomp.rect.y + trancomp.rect.h >= bounds.bottom:
+                dircomp.dir *= -1
+            
         if typecomp.typename == factory.ENTITY_TYPE[3]:
             # Motion
             # trancomp.rect.x += movcomp.vx
@@ -118,16 +133,12 @@ class DebugSystem(System):
 
     def update(self, entity, screen, event):
         typecomp = entity.getcomponent("Type")
+        trancomp = entity.getcomponent("Transform")
     
-        if typecomp.typename == factory.ENTITY_TYPE[1]:
-            pass
         if typecomp.typename == factory.ENTITY_TYPE[0]:
-            pass
-        if typecomp.typename == factory.ENTITY_TYPE[2]:
-            pass
-        if typecomp.typename == factory.ENTITY_TYPE[3]:
-           trancomp = entity.getcomponent("Transform")
-           pygame.draw.rect(screen,(0,100,255), trancomp.rect, 3)
+           pygame.draw.rect(screen,factory.BLUE, trancomp.rect, 3)
+        else:
+           pygame.draw.rect(screen,factory.RED, trancomp.rect, 3)
 
 
 
@@ -158,9 +169,9 @@ class InputSystem(System):
 
 
 class Direction:
-    def __init__(self, direction=1):
+    def __init__(self, dire=1):
         self.name = "Direction"
-        self.direction = direction
+        self.dir = dire
 
 # Has a Position in the world
 class Transform:

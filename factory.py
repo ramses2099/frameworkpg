@@ -4,6 +4,11 @@ import engine
 # Windows Size
 WINDOW_SIZE = (600, 450)
 
+# Colors
+RED = (255, 30, 70)
+BLUE = (10, 20, 200)
+GREEN = (50, 230, 40)
+
 # images
 PATH_DIR = os.getcwd()
 PATH_ASSETS = os.path.join(PATH_DIR, "assets")
@@ -48,7 +53,7 @@ def makeElement(x, y):
     entity.addcomponent(engine.Type(typename=ENTITY_TYPE[1]))
     entity.addcomponent(engine.Transform(x, y, SIZE_IMG_ELEMENT[0], SIZE_IMG_ELEMENT[1]))
     entity.addcomponent(engine.Sprite())
-    entity.addcomponent(engine.Motion(0, 0))
+    entity.addcomponent(engine.Motion(0, 1))
     return entity
 
 

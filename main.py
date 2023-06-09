@@ -15,12 +15,15 @@ entities = []
 
 # player_rect = player_image.get_rect()
 player = factory.makePlayer()
+player.addcomponent(engine.Debug())
 entities.append(player)
 
-element = factory.makeElement(50, 50)
-entities.append(element)
+# element = factory.makeElement(50, 50)
+# entities.append(element)
 
-element1 = factory.makeElement(350, 350)
+element1 = factory.makeElement(350, 50)
+element1.addcomponent(engine.Direction())
+element1.addcomponent(engine.Debug())
 entities.append(element1)
 
 ballblue = factory.makeBall()
@@ -37,6 +40,7 @@ item.removecomponent("Motion")
 entities.append(item)
 # item.printcomponents()
 
+# System
 drawsystem = engine.DrawSystem()
 movementsystem = engine.MovementSystem()
 inputsystem = engine.InputSystem(window_size=WINDOW_SIZE)
