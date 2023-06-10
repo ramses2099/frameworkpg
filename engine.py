@@ -82,7 +82,7 @@ class MovementSystem(System):
             trancomp.rect.y += dircomp.dir * movcomp.vy
             
             # Bound
-            if trancomp.rect.x <= bounds.lef or trancomp.rect.x + trancomp.rect.w >= bounds.right:
+            if trancomp.rect.x <= bounds.left or trancomp.rect.x + trancomp.rect.w >= bounds.right:
                 dircomp.dir *= -1 
             if trancomp.rect.y <= bounds.top or trancomp.rect.y + trancomp.rect.h >= bounds.bottom:
                 dircomp.dir *= -1
@@ -139,7 +139,6 @@ class DebugSystem(System):
            pygame.draw.rect(screen,factory.BLUE, trancomp.rect, 3)
         else:
            pygame.draw.rect(screen,factory.RED, trancomp.rect, 3)
-
 
 
 class InputSystem(System):
