@@ -1,6 +1,7 @@
 import pygame, sys, os.path
 from pygame.locals import *
 import random
+from player import Player
 
 
 WINDOW_SIZE = (600, 450)
@@ -12,36 +13,11 @@ BLUE = (10, 20, 200)
 GREEN = (50, 230, 40)
 
 
-class Particle:
-    def __init__(self, x, y) -> None:
-        self.position = pygame.math.Vector2(x ,y)
-        self.velocity = pygame.math.Vector2(0,0)
-        self.acceleration = pygame.math.Vector2(15,10)
-        self.radius =25
-        
-    def update(self,bound, dt):
-        self.velocity.x += self.acceleration.x * dt
-        self.velocity.y += self.acceleration.y * dt
-        
-        self.position.x += self.velocity.x * dt
-        self.position.y += self.velocity.y * dt
-        
-        self.handlerBoxCollision(bound)
-        
-    def handlerBoxCollision(self, bound):
-        if self.position.x -self.radius <= bound.left or self.position.x + self.radius >= bound.right:
-            self.velocity.x =-self.velocity.x
-        if self.position.y -self.radius <= bound.top or self.position.y +self.radius>= bound.bottom:
-            self.velocity.y =-self.velocity.y
-    
-    def draw(self,screen):
-        pygame.draw.circle(screen, RED, self.position,self.radius)
-
 
 # ECS
 entities = []
-
-p = Particle(250,220)
+player = Player(50,10, 25,25)
+tiles= []
 
 def main():
     pygame.init()
@@ -51,27 +27,56 @@ def main():
     
     # rect
     rect_bounds = pygame.display.get_surface().get_rect()
-
+    
+    # groun
+    rect_ground = pygame.rect.Rect(0,440,600,20)
+    tiles.append(rect_ground)
+    
     while True:
+        #DELTA TIME
+        dt = clock.tick(FPS) * .001 * FPS
+        #INPUT EVENT
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type ==KEYDOWN:
+                if event.key == K_LEFT:
+                    player.LEFT_KEY = True
+                elif event.key == K_RIGHT:
+                    player.RIGHT_KEY = True
+                elif event.key == K_SPACE:
+                    player.jump()
+                    
+            if event.type ==KEYUP:
+                if event.key == K_LEFT:
+                    player.LEFT_KEY = False
+                elif event.key == K_RIGHT:
+                    player.RIGHT_KEY = False
+                elif event.key == K_SPACE:
+                    if player.is_jumping:
+                        player.velocity.y *= .25
+                        player.is_jumping = False
+                    
                 
         screen.fill(BLACK)
         
         # Update
+        player.update(dt,tiles)
         
-        #FPS
-        dt = 1/FPS
-        p.update(rect_bounds,dt)
+    
+
 
         # Draw 
         pygame.draw.rect(screen,BLUE,rect_bounds,5)
-        p.draw(screen)
+        
+        # ground
+        pygame.draw.rect(screen,RED,rect_ground)
+        
+        player.draw(screen)
         
         pygame.display.flip()
-        clock.tick(FPS)
+        
 
 
 if __name__ == "__main__":
