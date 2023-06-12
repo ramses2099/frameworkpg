@@ -1,7 +1,6 @@
 import pygame, sys
 from pygame.locals import *
-from setting import *
-from level import Level
+from body import Body
 
 
 WINDOW_SIZE = (600, 450)
@@ -12,6 +11,12 @@ RED = (255, 30, 70)
 BLUE = (10, 20, 200)
 GREEN = (50, 230, 40)
 
+# Bodies Array
+bodies = []
+body = Body(25,25,30,30, 10)
+body.addIstant(0,body.mass*9.81)
+body.addIstant(5,-5)
+bodies.append(body)
 
 def main():
     pygame.init()
@@ -19,9 +24,7 @@ def main():
     screen = pygame.display.set_mode(WINDOW_SIZE)
     clock = pygame.time.Clock()
     
-    # Level system
-    level = Level(level_map, screen)
-      
+   
     while True:
         #DELTA TIME
         dt = clock.tick(FPS) * .001 * FPS
@@ -35,9 +38,12 @@ def main():
         screen.fill(BLACK)
         
         # Update
-      
-      
-        # Draw 
+        for body in bodies:
+            body.update(dt) 
+
+        # Draw
+        for body in bodies:
+            body.draw(screen) 
       
         
         pygame.display.flip()
