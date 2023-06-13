@@ -9,146 +9,128 @@ RED = (255, 30, 70)
 BLUE = (10, 20, 200)
 GREEN = (50, 230, 40)
 
-BLOCK_RED = (242, 85, 96)
-BLOCK_BLUE = (86, 174, 87)
-BLOCK_GREEN = (69, 177, 233)
-
-PADDLE_COLOR = (142, 135, 123)
-PADDLE_OUTLINE = (100, 100, 100)
-
-
-BG =(234,218,184)
-
 pygame.init()
 pygame.display.set_caption(TITLE)
 screen = pygame.display.set_mode(WINDOW_SIZE)
 clock = pygame.time.Clock()      
 
-COLS = 6
-ROWS = 6
-
-class Wall:
-    def __init__(self) -> None:
-        self.width = WINDOW_SIZE[0] // COLS
-        self.height = 50
-        self.blocks = []
-        
-    def create_wall(self):
-        block_individual = []
-        for row in range(ROWS):
-            block_row = []            
-            for col in range(COLS):
-                b_x = col * self.width
-                b_y = row * self.height
-                rect = pygame.Rect(b_x,b_y,self.width, self.height)
-                strenght = random.randint(1,3)
-                block_individual = [rect,strenght]
-                block_row.append(block_individual)
-            self.blocks.append(block_row)
-        
-    def draw(self):
-        for row in self.blocks:
-            for block in row:
-                if block[1] == 3:
-                    block_col = BLOCK_BLUE
-                elif block[1] == 2:
-                    block_col = BLOCK_GREEN
-                elif block[1] == 1:
-                    block_col = BLOCK_RED
-                #Draw
-                pygame.draw.rect(screen,block_col, block[0])
-                pygame.draw.rect(screen,BG, block[0],3)
-            
-        
-class Paddle:
-    def __init__(self) -> None:
-        self.width = int(WINDOW_SIZE[0]/COLS)
-        self.height = 20
-        self.x = int((WINDOW_SIZE[0]/2)- (self.width/2))
-        self.y = WINDOW_SIZE[1] - (self.height * 2)
-        self.speed = 10
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.direction = 0
-        
-    def move(self, dt):
-        self.direction = 0
-        key = pygame.key.get_pressed()
-        if key[pygame.K_LEFT] and self.rect.left > 0:
-            self.rect.x -= self.speed * dt
-            self.direction = -1
-        if key[pygame.K_RIGHT] and self.rect.right < WINDOW_SIZE[0]:
-            self.rect.x += self.speed * dt
-            self.direction = 1
-            
-
-    def draw(self):
-        #Draw
-        pygame.draw.rect(screen, PADDLE_COLOR, self.rect)
-        pygame.draw.rect(screen, PADDLE_OUTLINE, self.rect,3)
-
-class Ball:
+class Particle:
     def __init__(self, x, y) -> None:
-        self.rad = 10
-        self.x = x - self.rad
-        self.y = y 
-        self.rect = pygame.Rect(x, y, (self.rad * 2), (self.rad * 2))
-        self.vx = 4
-        self.vy = -4
-        self.v_max = 5 # max velocity
-        self.game_over = 0
-        self.collision_thresh = 5
-        
-    def update(self, paddle, dt):
-        #check collition
-        if self.rect.left < 0 or self.rect.right > WINDOW_SIZE[0]:
-            self.vx *= -1
-        if self.rect.top < 0:
-            self.vy *= -1
-            
-        #game over
-        if self.rect.bottom > WINDOW_SIZE[1]:
-            self.game_over =-2
-        
-        #look for collision with paddle
-        if self.rect.colliderect(paddle):
-            if abs(self.rect.bottom - paddle.rect.top) < self.collision_thresh and self.vy > 0:
-                self.vy *= -1
-                self.vx += paddle.direction
-                if self.vx > self.v_max:
-                    self.vx = self.v_max
-                elif self.vx < 0 and self.vx < -self.v_max:
-                    self.vx = -self.v_max
-            else:
-                self.vx *= -1
-        
-        
-        self.rect.x += self.vx * dt
-        self.rect.y += self.vy * dt
-        
-        return self.game_over
-
-    def draw(self):
-        #Draw
-        x = self.rect.x + self.rad
-        y = self.rect.y + self.rad
-        pygame.draw.circle(screen, PADDLE_COLOR, (x,y),self.rad)
-        pygame.draw.circle(screen, PADDLE_OUTLINE, (x,y),self.rad,3)
-
-class App:
-    def __init__(self) -> None:
-       self.wall = Wall()
-       self.wall.create_wall()
-       self.paddle = Paddle()
-       self.ball = Ball(self.paddle.x +(self.paddle.width // 2), self.paddle.y - self.paddle.height)
-       
-    def draw(self):
-        self.wall.draw()
-        self.paddle.draw()
-        self.ball.draw()
+        self.radius = 10
+        self.x = x - self.radius
+        self.y = y
+        self.rect = pygame.Rect(x, y, (self.radius * 2), (self.radius * 2))
+        self.weight = random.random() * 1 + 1
+        self.dirX = 1
     
     def update(self, dt):
-        self.paddle.move(dt)
-        self.ball.update(self.paddle,dt)
+        # if self.rect.bottom > WINDOW_SIZE[1]:
+        #     self.rect.y = 0 - self.radius
+        #     self.weight = random.random() * 1 + 1
+        #     self.radius = 10
+        #     self.rect.x = random.random() * WINDOW_SIZE[0] * 1.3
+        self.weight += 0.01
+        self.rect.y += self.weight * dt
+        self.rect.x += self.dirX
+        
+    def draw(self, screen):
+         #Draw
+        x = self.rect.x + self.radius
+        y = self.rect.y + self.radius
+        pygame.draw.circle(screen, RED, (x,y),self.radius)
+        pygame.draw.circle(screen, BLUE, (x,y),self.radius,3)
+
+class Ground:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+        self.w = WINDOW_SIZE[0]
+        self.h = 25
+        self.rect = pygame.rect.Rect(self.x, self.y-self.h, self.w, self.h)
+        
+    def draw(self, screen):
+         #Draw
+        pygame.draw.rect(screen, GREEN, self.rect)
+        pygame.draw.rect(screen, RED, self.rect, 3)
+
+class Box:
+    def __init__(self, x, y) -> None:
+        self.position = pygame.math.Vector2(x, y)
+        self.velocity = pygame.math.Vector2(0, 0)
+        self.acceleration = pygame.math.Vector2(0, 0)
+        self.w, self.h = 25, 25
+        self.mass = random.randint(1,10)
+        self.rect = pygame.rect.Rect(self.position.x, self.position.y, self.w, self.h)
+    
+    
+    def applyForce(self, vect):
+        x = vect.x / self.mass
+        y = vect.y / self.mass
+        # Apply        
+        self.acceleration.x = x
+        self.acceleration.y = y
+        
+    def draw(self, screen):
+         #Draw
+        pygame.draw.rect(screen, GREEN, self.rect)
+        pygame.draw.rect(screen, BLUE, self.rect, 3) 
+       
+    def update(self, dt):
+        self.velocity.x += self.acceleration.x * dt
+        self.velocity.y += self.acceleration.y * dt
+        # Position
+        self.position.x += self.velocity.x * dt
+        self.position.y += self.velocity.y * dt
+        # pygame object
+        self.rect.x = int(self.position.x)
+        self.rect.y = int(self.position.y)
+        # Boucing
+        if self.rect.left < self.w or self.rect.right > (WINDOW_SIZE[0] - self.w):
+            self.velocity.x *= -1
+        if self.rect.bottom > (WINDOW_SIZE[0] - self.h) or self.rect.top < self.h:
+            self.velocity.y *= -1
+        
+class App:
+    def __init__(self) -> None:
+        self.particlesArray = []
+        self.numberOfParticle = 20
+        self.groud = Ground(0,WINDOW_SIZE[1])
+        # 
+        self.init()
+        
+    def init(self):
+        for i in range(self.numberOfParticle):
+            x = random.randint(10, WINDOW_SIZE[0]-25)            
+            y = random.randint(-25,25)
+            # self.particlesArray.append(Particle(x,y))
+            self.particlesArray.append(Box(x, y))
+
+            # p = Box(x, y)
+            # p.applyForce(pygame.math.Vector2(0,0.15))           
+            # self.particlesArray.append(p)
+        
+    def draw(self):
+        for p in self.particlesArray:
+            p.draw(screen)
+        
+        #GROUND    
+        self.groud.draw(screen)
+    
+    def update(self, dt):
+        for p in self.particlesArray:
+            p.update(dt)
+            #Collition ball vs ground
+            if pygame.rect.Rect.colliderect(p.rect, self.groud.rect):
+               p.velocity.x *= -1
+               p.velocity.y *= -1
+            for other in self.particlesArray:
+                if other.rect != p.rect:
+                    if pygame.rect.Rect.colliderect(p.rect, other.rect):
+                        p.velocity.x *= -1
+                        p.velocity.y *= -1
+                        p.applyForce(pygame.math.Vector2(0.10, 0.0))
+                        p.applyForce(pygame.math.Vector2(0.0, 0.15))  
+        
     
     def run(self):
         while True:
@@ -161,7 +143,7 @@ class App:
                     sys.exit()
                                     
                     
-            screen.fill(BG)
+            screen.fill(BLACK)
             
             # Update
             self.update(dt)
