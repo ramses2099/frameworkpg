@@ -1,14 +1,14 @@
+import pygame
 import constants
 import ecs
 
 
-# Make Element
+# Make Element No Motion
 def makeElement(x, y):
     entity = ecs.Entity()
     entity.addcomponent(ecs.Type(typename=constants.ENTITY_TYPE[1]))
-    entity.addcomponent(ecs.Transform(x, y, constants.SIZE_IMG_ELEMENT[0], constants.SIZE_IMG_ELEMENT[1]))
-    entity.addcomponent(ecs.Sprite())
-    entity.addcomponent(ecs.Motion(0, 1))
+    entity.addcomponent(ecs.Transform(rect=pygame.rect.Rect(x, y, constants.SIZE_IMG_ELEMENT[0], constants.SIZE_IMG_ELEMENT[1])))
+    entity.addcomponent(ecs.Sprite())    
     return entity
 
 
@@ -17,11 +17,11 @@ def makePlayer():
     entity = ecs.Entity()
     entity.addcomponent(ecs.Type(typename=constants.ENTITY_TYPE[0]))
     entity.addcomponent(
-        ecs.Transform(
+        ecs.Transform(rect=pygame.rect.Rect(
             constants.PADDLE_START_POS[0],
             constants.PADDLE_START_POS[1],
             constants.SIZE_IMG_PADDLE[0],
-            constants.SIZE_IMG_PADDLE[1],
+            constants.SIZE_IMG_PADDLE[1])
         )
     )
     entity.addcomponent(ecs.Motion(90, 0))
@@ -38,7 +38,7 @@ def makeBall(x=0, y=0):
     if x == 0 and y == 0:
         entity.addcomponent(
             ecs.Transform(
-                constants.BALL_START_POS[0], constants.BALL_START_POS[1], constants.SIZE_IMG_BALL[0], constants.SIZE_IMG_BALL[1]
+                rect=pygame.rect.Rect(constants.BALL_START_POS[0], constants.BALL_START_POS[1], constants.SIZE_IMG_BALL[0], constants.SIZE_IMG_BALL[1])
             )
         )
     else:
@@ -52,8 +52,8 @@ def makeBall(x=0, y=0):
 def makeItem(x, y):
     entity = ecs.Entity()
     entity.addcomponent(ecs.Type(typename=constants.ENTITY_TYPE[3]))
-    entity.addcomponent(ecs.Transform(x, y, constants.SIZE_IMG_BALL[0], constants.SIZE_IMG_BALL[1]))
-    entity.addcomponent(ecs.Motion(1, 0,0,0.3))
+    entity.addcomponent(ecs.Transform(rect=pygame.rect.Rect(x, y, constants.SIZE_IMG_BALL[0], constants.SIZE_IMG_BALL[1])))
+    entity.addcomponent(ecs.Motion(0, 1, 0,0.5))
+    entity.addcomponent(ecs.Direction())
     entity.addcomponent(ecs.Sprite())
-    entity.addcomponent(ecs.Collision())
     return entity

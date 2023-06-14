@@ -5,21 +5,15 @@ from dataclasses import dataclass
 
 @dataclass
 class Direction:
-    dir:float = 1.0
+    dx:float = 1.0
+    dy:float = 1.0
     name:str ="Direction"
 
 # Has a Position in the world
 @dataclass
 class Transform:
-    x:int=0
-    y:int=0
-    w:int=0
-    h:int=0
+    rect: pygame.rect.Rect
     name:str ="Transform"
-    
-    def rect(self):
-       rect = pygame.Rect(self.x, self.y, self.w, self.h)
-       return rect
 
 # Can move(velocity, acceleration)
 @dataclass

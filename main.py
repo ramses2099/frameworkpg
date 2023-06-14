@@ -9,16 +9,16 @@ entities = []
 
 # player_rect = player_image.get_rect()
 # player = factory.makePlayer()
-# player.addcomponent(engine.Debug())
+# player.addcomponent(ecs.Debug())
 # entities.append(player)
 
-# element = factory.makeElement(50, 50)
-# entities.append(element)
+# # element = factory.makeElement(50, 50)
+# # entities.append(element)
 
-element1 = factory.makeElement(350, 50)
-# element1.addcomponent(engine.Direction())
-# element1.addcomponent(engine.Debug())
-entities.append(element1)
+# element1 = factory.makeElement(350, 50)
+# element1.addcomponent(ecs.Direction())
+# element1.addcomponent(ecs.Debug())
+# entities.append(element1)
 
 # ballblue = factory.makeBall()
 # ballblue.removecomponent("Motion")
@@ -31,19 +31,19 @@ entities.append(element1)
 # ballgrey.addcomponent(engine.Debug())
 # entities.append(ballgrey)
 
-# # Object Test
-# item = factory.makeItem(45, 54)
-# item.addcomponent(engine.Debug())
+# Object Test
+item = factory.makeItem(45, 54)
+item.addcomponent(ecs.Debug())
 # item.removecomponent("Motion")
-# entities.append(item)
-# # item.printcomponents()
+entities.append(item)
+# item.printcomponents()
 
 # System
 drawsystem = ecs.DrawSystem()
-# movementsystem = engine.MovementSystem()
-# inputsystem = engine.InputSystem(window_size=WINDOW_SIZE)
-# collisionsystem = engine.CollisionSystem(player)
-# debugsystem = engine.DebugSystem()
+movementsystem = ecs.MovementSystem()
+inputsystem = ecs.InputSystem(window_size=constants.WINDOW_SIZE)
+# collisionsystem = ecs.CollisionSystem(player)
+debugsystem = ecs.DebugSystem()
 
 def main():
     pygame.init()
@@ -57,18 +57,18 @@ def main():
                 pygame.quit()
                 sys.exit()
             # input system
-            # inputsystem.updates(entities, screen=None, event=event)
+            inputsystem.updates(entities, screen=None, event=event)
 
         screen.fill(constants.BLACK)
         
         # update system
-        # movementsystem.updates(entities, screen=None, event=None)
+        movementsystem.updates(entities, screen=None, event=None)
         
         # update collision system
         # collisionsystem.updates(entities, screen=None, event=None)
         
         # update debugs system
-        # debugsystem.updates(entities, screen, event=None)
+        debugsystem.updates(entities, screen, event=None)
 
         # draw system
         drawsystem.updates(entities, screen, event=None)
