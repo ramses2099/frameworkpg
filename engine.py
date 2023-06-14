@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import pygame
 from pygame.locals import *
 import uuid
@@ -165,67 +166,6 @@ class InputSystem(System):
                 if trancomp.rect.x >= trancomp.rect.w:
                     dircomp.direction = -1
                     trancomp.rect.x += movcomp.vx * dircomp.direction
-
-
-class Direction:
-    def __init__(self, dire=1):
-        self.name = "Direction"
-        self.dir = dire
-
-# Has a Position in the world
-class Transform:
-    def __init__(self, x, y, w, h):
-        self.name = "Transform"
-        self.rect = pygame.Rect(x, y, w, h)
-
-# Can move(velocity, acceleration)
-class Motion:
-    def __init__(self, vx, vy, ax =0, ay=0):
-        self.name = "Motion"
-        self.vx = vx
-        self.vy = vy
-        self.ax = ax
-        self.ay = ay
-
-
-class Type:
-    def __init__(self, typename) -> None:
-        self.name = "Type"
-        self.typename = typename
-
-# Should display on screen
-class Sprite:
-    def __init__(self) -> None:
-        self.name = "Sprite"
-        self.draw = True
-
-# Collides with other entity
-class Collision:
-    def __init__(self) -> None:
-        self.name = "Collision"
-
-# Life 
-class Life:
-    def __init__(self) -> None:
-        self.name = "Life"
-        self.currentlife = 3
-        self.maxlife = 5
-
-# Debug component
-class Debug:
-    def __init__(self) -> None:
-        self.name = "Debug"
-
-class Collectable:
-    def __init__(self) -> None:
-        self.name = "Collectable"
-        self.collect = True
-
-
-class Input:
-    def __init__(self) -> None:
-        self.name = "Input"
-        self.collect = True
 
 
 class Entity:
